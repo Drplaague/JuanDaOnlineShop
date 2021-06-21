@@ -14,6 +14,7 @@ import com.example.juandaonlineshop.activity.DetailProdukActivity
 import com.example.juandaonlineshop.activity.LoginActivity
 import com.example.juandaonlineshop.helper.Helper
 import com.example.juandaonlineshop.model.Produk
+import com.example.juandaonlineshop.util.Config
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import java.text.NumberFormat
@@ -43,7 +44,7 @@ class AdapterProduk(var activity: Activity, var data:ArrayList<Produk>): Recycle
         holder.tvNama.text = data[position].name.toString()
         holder.tvHarga.text = Helper().gantiRupiah(data[position].harga)
 //        holder.imgProduk.setImageResource(data[position].image)
-        val image = "http://192.168.1.8/tokojuanda/public/storage/produk/" + data[position].image
+        val image = Config.produkUrl + data[position].image
         Picasso.get()
             .load(image)
             .placeholder(R.drawable.product)

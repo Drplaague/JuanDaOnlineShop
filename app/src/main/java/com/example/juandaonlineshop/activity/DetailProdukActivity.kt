@@ -1,14 +1,17 @@
 package com.example.juandaonlineshop.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.juandaonlineshop.R
 import com.example.juandaonlineshop.room.MyDatabase
 import com.example.juandaonlineshop.helper.Helper
 import com.example.juandaonlineshop.model.Produk
+import com.example.juandaonlineshop.util.Config
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import io.reactivex.Observable
@@ -41,7 +44,7 @@ class DetailProdukActivity : AppCompatActivity() {
             if (data == null) {
                 insert()
             } else {
-                data.jumlah =  data.jumlah + 1
+                data.jumlah += 1
                 update(data)
             }
 
@@ -55,7 +58,9 @@ class DetailProdukActivity : AppCompatActivity() {
             }
         }
         btn_toKeranjang.setOnClickListener {
-
+            val intent = Intent("event:keranjang")
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+            onBackPressed()
         }
     }
 
@@ -101,7 +106,7 @@ class DetailProdukActivity : AppCompatActivity() {
         tv_harga.text = Helper().gantiRupiah(produk.harga)
         tv_deskripsi.text = produk.deskripsi
 
-        val img = "http://192.168.1.8/tokojuanda/public/storage/produk/" + produk.image
+        val img = Config.produkUrl + produk.image
         Picasso.get()
             .load(img)
             .placeholder(R.drawable.product)

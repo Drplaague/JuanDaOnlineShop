@@ -11,11 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.juandaonlineshop.R
 import com.example.juandaonlineshop.adapter.AdapterKeranjang
-import com.example.juandaonlineshop.adapter.AdapterProduk
+import com.example.juandaonlineshop.helper.Helper
 import com.example.juandaonlineshop.room.MyDatabase
 
 class KeranjangFragment : Fragment() {
 
+    lateinit var mydb : MyDatabase
+    //di panggil sekali ketika aktif
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -23,21 +25,45 @@ class KeranjangFragment : Fragment() {
         // Inflate the layout for this fragment
         val view: View = inflater.inflate(R.layout.fragment_keranjang, container, false)
         init(view)
-        mainButton()
+        mydb = MyDatabase.getInstance(requireActivity())!!
 
+        mainButton()
 
         return view
     }
 
     private fun displayproduk(){
-        val mydb = MyDatabase.getInstance(requireActivity())
-        val listProduk = mydb!!.daoKeranjang().getAll() as ArrayList
+        val listProduk = mydb.daoKeranjang().getAll() as ArrayList
 
         val layoutManager = LinearLayoutManager(activity)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
+        lateinit var adapter : AdapterKeranjang
+        adapter = AdapterKeranjang(requireActivity(), listProduk, object : AdapterKeranjang.Listeners{
+            override fun onUpdate() {
+                hitungTotal()
+            }
 
-        rvProduk.adapter = AdapterKeranjang(requireActivity(), listProduk)
+            override fun onDelete(position: Int) {
+                listProduk.removeAt(position)
+                adapter.notifyDataSetChanged()
+                hitungTotal()
+            }
+
+        })
+        rvProduk.adapter = adapter
         rvProduk.layoutManager = layoutManager
+    }
+
+    fun hitungTotal(){
+        val listProduk = mydb.daoKeranjang().getAll() as ArrayList
+
+        var totalHarga = 0
+        for (produk in listProduk){
+
+            val harga = Integer.valueOf(produk.harga)
+            totalHarga += (harga * produk.jumlah)
+        }
+        tvTotal.text = Helper().gantiRupiah(totalHarga)
     }
 
     private fun mainButton(){
@@ -66,6 +92,7 @@ class KeranjangFragment : Fragment() {
 
     override fun onResume() {
         displayproduk()
+        hitungTotal()
         super.onResume()
     }
 
