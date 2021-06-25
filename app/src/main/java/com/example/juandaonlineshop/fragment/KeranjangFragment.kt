@@ -62,6 +62,8 @@ class KeranjangFragment : Fragment() {
     fun hitungTotal(){
         val listProduk = mydb.daoKeranjang().getAll() as ArrayList
         var totalHarga = 0
+
+        //check box
         var isSelectedAll = true
         for (produk in listProduk) {
             if (produk.selected) {
