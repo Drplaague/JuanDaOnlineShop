@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.juandaonlineshop.R
 import com.example.juandaonlineshop.adapter.AdapterKeranjang
 import com.example.juandaonlineshop.helper.Helper
+import com.example.juandaonlineshop.model.Produk
 import com.example.juandaonlineshop.room.MyDatabase
 
 class KeranjangFragment : Fragment() {
@@ -32,12 +33,15 @@ class KeranjangFragment : Fragment() {
         return view
     }
 
+    lateinit var adapter : AdapterKeranjang
+    var listProduk = ArrayList<Produk>()
+
     private fun displayproduk(){
-        val listProduk = mydb.daoKeranjang().getAll() as ArrayList
+        listProduk = mydb.daoKeranjang().getAll() as ArrayList
 
         val layoutManager = LinearLayoutManager(activity)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
-        lateinit var adapter : AdapterKeranjang
+
         adapter = AdapterKeranjang(requireActivity(), listProduk, object : AdapterKeranjang.Listeners{
             override fun onUpdate() {
                 hitungTotal()
