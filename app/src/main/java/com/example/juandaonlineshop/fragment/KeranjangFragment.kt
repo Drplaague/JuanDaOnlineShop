@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -60,13 +61,18 @@ class KeranjangFragment : Fragment() {
 
     fun hitungTotal(){
         val listProduk = mydb.daoKeranjang().getAll() as ArrayList
-
         var totalHarga = 0
-        for (produk in listProduk){
-
-            val harga = Integer.valueOf(produk.harga)
-            totalHarga += (harga * produk.jumlah)
+        var isSelectedAll = true
+        for (produk in listProduk) {
+            if (produk.selected) {
+                val harga = Integer.valueOf(produk.harga)
+                totalHarga += (harga * produk.jumlah)
+            } else {
+                isSelectedAll = false
+            }
         }
+
+        cbAll.isChecked = isSelectedAll
         tvTotal.text = Helper().gantiRupiah(totalHarga)
     }
 
@@ -78,6 +84,14 @@ class KeranjangFragment : Fragment() {
         btnBayar.setOnClickListener {
 
         }
+        cbAll.setOnClickListener {
+            for (i in listProduk.indices) {
+                val produk = listProduk[i]
+                produk.selected = cbAll.isChecked
+                listProduk[i] = produk
+            }
+            adapter.notifyDataSetChanged()
+        }
 
 
     }
@@ -86,11 +100,13 @@ class KeranjangFragment : Fragment() {
     lateinit var rvProduk: RecyclerView
     lateinit var tvTotal: TextView
     lateinit var btnBayar: TextView
+    lateinit var cbAll: CheckBox
     private fun init(view: View) {
         btnDelete = view.findViewById(R.id.btn_delete)
         rvProduk = view.findViewById(R.id.rv_produk)
         tvTotal = view.findViewById(R.id.tv_total)
         btnBayar = view.findViewById(R.id.btn_bayar)
+        cbAll = view.findViewById(R.id.cb_all)
 
     }
 

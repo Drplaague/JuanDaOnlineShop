@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -33,6 +34,7 @@ class AdapterKeranjang(var activity: Activity, var data:ArrayList<Produk>, var l
         val btnKurang = view.findViewById<ImageView>(R.id.btn_kurang)
         val btnDelete = view.findViewById<ImageView>(R.id.btn_delete)
 
+        val checkBox = view.findViewById<CheckBox>(R.id.checkBox)
         val tvJumlah = view.findViewById<TextView>(R.id.tv_jml_angka)
     }
 
@@ -55,6 +57,13 @@ class AdapterKeranjang(var activity: Activity, var data:ArrayList<Produk>, var l
 
         var jumlah = data[position].jumlah
         holder.tvJumlah.text = jumlah.toString()
+
+        //check box
+        holder.checkBox.isChecked = produk.selected
+        holder.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            produk.selected = isChecked
+            update(produk)
+        }
 
 //        holder.imgProduk.setImageResource(data[position].image)
         val image = Config.produkUrl + data[position].image
