@@ -114,11 +114,8 @@ class DetailProdukActivity : AppCompatActivity() {
             .resize(400, 400)
             .into(image)
 
-        //set toolbar
-        setSupportActionBar(toolbar)
-        supportActionBar!!.title = produk.name
-        supportActionBar!!.setDisplayShowHomeEnabled(true)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        // setToolbar
+        Helper().setToolbar(this, toolbar, produk.name)
 
     }
 

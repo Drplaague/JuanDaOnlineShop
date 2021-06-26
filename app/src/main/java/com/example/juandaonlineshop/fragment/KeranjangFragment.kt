@@ -1,5 +1,6 @@
 package com.example.juandaonlineshop.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.juandaonlineshop.R
+import com.example.juandaonlineshop.activity.PengirimanActivity
 import com.example.juandaonlineshop.adapter.AdapterKeranjang
 import com.example.juandaonlineshop.helper.Helper
 import com.example.juandaonlineshop.model.Produk
@@ -84,6 +86,7 @@ class KeranjangFragment : Fragment() {
         }
 
         btnBayar.setOnClickListener {
+            startActivity(Intent(requireActivity(), PengirimanActivity::class.java))
 
         }
         cbAll.setOnClickListener {

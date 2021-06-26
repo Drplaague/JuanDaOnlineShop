@@ -84,12 +84,8 @@ class HomeFragment : Fragment() {
 
                     listProduk = res.produks
                     displayProduk()
-
                     }
-
-
                 }
-
         })
     }
 
