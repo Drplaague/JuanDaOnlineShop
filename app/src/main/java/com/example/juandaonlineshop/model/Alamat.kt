@@ -24,4 +24,5 @@ class Alamat {
     var kota = ""
     var kecamatan = ""
     var kodepos = ""
+    var isSelected = false
 }

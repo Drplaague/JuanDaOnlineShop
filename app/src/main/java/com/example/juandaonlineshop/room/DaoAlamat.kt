@@ -27,8 +27,8 @@ interface DaoAlamat {
     @Query("SELECT * FROM alamat WHERE id = :id LIMIT 1")
     fun getProduk(id: Int): Alamat
 
-    @Query("DELETE FROM alamat WHERE id = :id")
-    fun deleteById(id: String): Int
+    @Query("SELECT * FROM alamat WHERE isSelected = :status LIMIT 1")
+    fun getByStatus(status: Boolean): Alamat
 
     @Query("DELETE FROM alamat")
     fun deleteAll(): Int
