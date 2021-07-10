@@ -9,7 +9,7 @@ import com.example.juandaonlineshop.MainActivity
 import com.example.juandaonlineshop.R
 import com.example.juandaonlineshop.app.ApiConfig
 import com.example.juandaonlineshop.helper.SharedPref
-import com.example.juandaonlineshop.model.ResponModel
+import com.example.juandaonlineshop.model.ResponOnkir
 import kotlinx.android.synthetic.main.activity_login.*
 import retrofit2.Call
 import retrofit2.Response
@@ -42,9 +42,9 @@ class LoginActivity : AppCompatActivity() {
 
         pb_login.visibility = View.VISIBLE
 
-        ApiConfig.instanceRetrofit.login(edt_email.text.toString(), edt_password.text.toString()).enqueue(object : retrofit2.Callback<ResponModel> {
+        ApiConfig.instanceRetrofit.login(edt_email.text.toString(), edt_password.text.toString()).enqueue(object : retrofit2.Callback<ResponOnkir> {
 
-            override fun onResponse(call: Call<ResponModel>, response: Response<ResponModel>) {
+            override fun onResponse(call: Call<ResponOnkir>, response: Response<ResponOnkir>) {
                 // Handel ketika berhasil
                 pb_login.visibility = View.GONE
                 val respon = response.body()!!
@@ -70,7 +70,7 @@ class LoginActivity : AppCompatActivity() {
 
             }
 
-            override fun onFailure(call: Call<ResponModel>, t: Throwable) {
+            override fun onFailure(call: Call<ResponOnkir>, t: Throwable) {
                 // Handel ketika gagal
                 pb_login.visibility = View.GONE
                 Toast.makeText(this@LoginActivity, "Error:" + t.message, Toast.LENGTH_SHORT).show()

@@ -1,9 +1,9 @@
 package com.example.juandaonlineshop.app
 
-import com.example.juandaonlineshop.model.ResponModel
+import com.example.juandaonlineshop.model.ResponOnkir
+import com.example.juandaonlineshop.model.rajaongkir.ResponOngkir
 import retrofit2.Call
 import retrofit2.http.*
-import okhttp3.ResponseBody
 
 
 interface ApiService {
@@ -15,28 +15,41 @@ interface ApiService {
         @Field("email") email: String,
         @Field("phone") nomortlp: String,
         @Field("password") password: String
-    ): Call<ResponModel>
+    ): Call<ResponOnkir>
 
     @FormUrlEncoded
     @POST("login")
     fun login(
         @Field("email") email: String,
         @Field("password") password: String
-    ): Call<ResponModel>
+    ): Call<ResponOnkir>
 
     @GET ("produk")
-    fun getProduk(): Call<ResponModel>
+    fun getProduk(): Call<ResponOnkir>
 
-    @GET ("provinsi")
-    fun getProvinsi(): Call<ResponModel>
+    @GET("province")
+    fun getProvinsi(
+        @Header("key") key: String
+    ): Call<ResponOnkir>
 
-    @GET ("kota")
+    @GET("city")
     fun getKota(
-        @Query("id_provinsi")id: Int
-    ): Call<ResponModel>
+        @Header("key") key: String,
+        @Query("province") id: String
+    ): Call<ResponOnkir>
 
     @GET ("kecamatan")
     fun getKecamatan(
         @Query("id_kota")id: Int
-    ): Call<ResponModel>
+    ): Call<ResponOnkir>
+
+    @FormUrlEncoded
+    @POST("cost")
+    fun ongkir(
+        @Header("key") key: String,
+        @Field("origin") origin: String,
+        @Field("destination") destination: String,
+        @Field("weight") weight: Int,
+        @Field("courier") courier: String
+    ): Call<ResponOngkir>
 }

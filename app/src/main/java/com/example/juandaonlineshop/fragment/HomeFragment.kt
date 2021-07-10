@@ -1,11 +1,9 @@
 package com.example.juandaonlineshop.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +14,7 @@ import com.example.juandaonlineshop.adapter.AdapterProduk
 import com.example.juandaonlineshop.adapter.AdapterSlider
 import com.example.juandaonlineshop.app.ApiConfig
 import com.example.juandaonlineshop.model.Produk
-import com.example.juandaonlineshop.model.ResponModel
+import com.example.juandaonlineshop.model.ResponOnkir
 import kotlinx.android.synthetic.main.activity_login.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -74,15 +72,20 @@ class HomeFragment : Fragment() {
     }
     private var listProduk: ArrayList<Produk> = ArrayList()
     fun getProduk() {
-        ApiConfig.instanceRetrofit.getProduk().enqueue(object : Callback<ResponModel> {
-            override fun onFailure(call: Call<ResponModel>, t: Throwable) {
+        ApiConfig.instanceRetrofit.getProduk().enqueue(object : Callback<ResponOnkir> {
+            override fun onFailure(call: Call<ResponOnkir>, t: Throwable) {
             }
 
-            override fun onResponse(call: Call<ResponModel>, response: Response<ResponModel>) {
+            override fun onResponse(call: Call<ResponOnkir>, response: Response<ResponOnkir>) {
                 val res = response.body()!!
                 if (res.success == 1) {
+                    val arrayProduk = ArrayList<Produk>()
+                    for (p in res.produks) {
+                        p.discount = 5000
+                        arrayProduk.add(p)
+                    }
 
-                    listProduk = res.produks
+                    listProduk = arrayProduk
                     displayProduk()
                     }
                 }

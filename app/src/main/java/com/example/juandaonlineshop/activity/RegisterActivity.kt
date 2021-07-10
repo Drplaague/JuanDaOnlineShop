@@ -9,7 +9,7 @@ import com.example.juandaonlineshop.MainActivity
 import com.example.juandaonlineshop.R
 import com.example.juandaonlineshop.app.ApiConfig
 import com.example.juandaonlineshop.helper.SharedPref
-import com.example.juandaonlineshop.model.ResponModel
+import com.example.juandaonlineshop.model.ResponOnkir
 import kotlinx.android.synthetic.main.activity_register.*
 import retrofit2.Call
 import retrofit2.Response
@@ -57,9 +57,9 @@ class RegisterActivity : AppCompatActivity() {
             edt_email.text.toString(),
             edt_phone.text.toString(),
             edt_password.text.toString()
-        ).enqueue(object : retrofit2.Callback<ResponModel> {
+        ).enqueue(object : retrofit2.Callback<ResponOnkir> {
 
-            override fun onResponse(call: Call<ResponModel>, response: Response<ResponModel>) {
+            override fun onResponse(call: Call<ResponOnkir>, response: Response<ResponOnkir>) {
                 // Handel ketika berhasil
                 pb.visibility = View.GONE
                 val respon = response.body()!!
@@ -79,7 +79,7 @@ class RegisterActivity : AppCompatActivity() {
 
             }
 
-            override fun onFailure(call: Call<ResponModel>, t: Throwable) {
+            override fun onFailure(call: Call<ResponOnkir>, t: Throwable) {
                 // Handel ketika gagal
                 pb.visibility = View.GONE
                 Toast.makeText(this@RegisterActivity, "Error:" + t.message, Toast.LENGTH_SHORT).show()

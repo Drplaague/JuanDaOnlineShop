@@ -1,10 +1,12 @@
 package com.example.juandaonlineshop.model
 
-class ResponModel {
+class ResponOnkir {
     var success = 0
     lateinit var message: String
     var user = User()
     var produks: ArrayList<Produk> = ArrayList()
+
+    var rajaongkir = ModelAlamat()
 
     var provinsi: ArrayList<ModelAlamat> = ArrayList()
     var kota_kabupaten: ArrayList<ModelAlamat> = ArrayList()
