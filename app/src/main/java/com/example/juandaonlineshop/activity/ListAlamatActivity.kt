@@ -30,7 +30,6 @@ class ListAlamatActivity : AppCompatActivity() {
         mainButton()
     }
     private fun displayAlamat(){
-        val myDb = MyDatabase.getInstance(this)!!
         val arrayList = myDb.daoAlamat().getAll() as ArrayList
 
         if (arrayList.isEmpty()) div_kosong.visibility = View.VISIBLE
@@ -39,8 +38,7 @@ class ListAlamatActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
 
-        rv_alamat.adapter = AdapterAlamat(arrayList, object : AdapterAlamat.Listeners{
-
+        rv_alamat.adapter = AdapterAlamat(arrayList, object : AdapterAlamat.Listeners {
             override fun onClicked(data: Alamat) {
                 if (myDb.daoAlamat().getByStatus(true) != null){
                     val alamatActive = myDb.daoAlamat().getByStatus(true)!!
@@ -48,14 +46,12 @@ class ListAlamatActivity : AppCompatActivity() {
                     updateActive(alamatActive, data)
                 }
             }
-
         })
 
         rv_alamat.layoutManager = layoutManager
     }
 
     private fun updateActive(dataActive: Alamat, dataNonActive: Alamat) {
-
         CompositeDisposable().add(Observable.fromCallable { myDb.daoAlamat().update(dataActive) }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())

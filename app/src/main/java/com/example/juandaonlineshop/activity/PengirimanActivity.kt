@@ -32,6 +32,7 @@ import retrofit2.Response
 
 class PengirimanActivity : AppCompatActivity() {
     lateinit var myDb: MyDatabase
+    var totalHarga = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +41,8 @@ class PengirimanActivity : AppCompatActivity() {
 
         myDb = MyDatabase.getInstance(this)!!
 
+        totalHarga = Integer.valueOf(intent.getStringExtra("extra")!!)
+        tv_totalBelanja.text = Helper().gantiRupiah(totalHarga)
         mainButton()
         setSepiner()
     }
@@ -123,19 +126,42 @@ class PengirimanActivity : AppCompatActivity() {
         })
     }
 
+    fun setTotal(ongkir: String) {
+        tv_ongkir.text = Helper().gantiRupiah(ongkir)
+        tv_total.text = Helper().gantiRupiah(Integer.valueOf(ongkir) + totalHarga)
+    }
+
     private fun displayOngkir(kurir: String, arrayList: ArrayList<Costs>){
+        var arrayOngkir = ArrayList<Costs>()
+        for (i in arrayList.indices) {
+            val ongkir = arrayList[i]
+            if (i == 0) {
+                ongkir.isActive = true
+            }
+            arrayOngkir.add(ongkir)
+        }
+        setTotal(arrayOngkir[0].cost[0].value)
 
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
 
-        rv_metode.adapter = AdapterKurir(arrayList, kurir, object : AdapterKurir.Listeners{
+        var adapter: AdapterKurir? = null
+        adapter = AdapterKurir(arrayOngkir, kurir, object : AdapterKurir.Listeners {
 
-            override fun onClicked(data: Alamat) {
+            override fun onClicked(data: Costs, index: Int) {
+                val newArrayOngkir = ArrayList<Costs>()
+                for (ongkir in arrayOngkir) {
+                    ongkir.isActive = data.description == ongkir.description
+                    newArrayOngkir.add(ongkir)
+                }
+                arrayOngkir = newArrayOngkir
+                adapter!!.notifyDataSetChanged()
+                setTotal(data.cost[0].value)
 
             }
 
         })
-
+        rv_metode.adapter = adapter
         rv_metode.layoutManager = layoutManager
     }
 

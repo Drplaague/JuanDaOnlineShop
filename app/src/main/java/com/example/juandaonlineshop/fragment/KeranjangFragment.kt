@@ -61,9 +61,10 @@ class KeranjangFragment : Fragment() {
         rvProduk.layoutManager = layoutManager
     }
 
+    var totalHarga = 0
     fun hitungTotal(){
         val listProduk = mydb.daoKeranjang().getAll() as ArrayList
-        var totalHarga = 0
+        totalHarga = 0
 
         //check box
         var isSelectedAll = true
@@ -86,7 +87,9 @@ class KeranjangFragment : Fragment() {
         }
 
         btnBayar.setOnClickListener {
-            startActivity(Intent(requireActivity(), PengirimanActivity::class.java))
+            val intent = Intent(requireActivity(), PengirimanActivity::class.java)
+            intent.putExtra("extra", "" + totalHarga)
+            startActivity(intent)
 
         }
         cbAll.setOnClickListener {
