@@ -10,18 +10,16 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.juandaonlineshop.R
-import com.example.juandaonlineshop.adapter.AdapterAlamat
 import com.example.juandaonlineshop.adapter.AdapterKurir
 import com.example.juandaonlineshop.app.ApiConfigAlamat
 import com.example.juandaonlineshop.helper.Helper
-import com.example.juandaonlineshop.model.Alamat
-import com.example.juandaonlineshop.model.ResponOnkir
+import com.example.juandaonlineshop.helper.SharedPref
+import com.example.juandaonlineshop.model.Chekout
 import com.example.juandaonlineshop.model.rajaongkir.Costs
 import com.example.juandaonlineshop.model.rajaongkir.ResponOngkir
-import com.example.juandaonlineshop.model.rajaongkir.Result
 import com.example.juandaonlineshop.room.MyDatabase
 import com.example.juandaonlineshop.util.ApiKey
-import kotlinx.android.synthetic.main.activity_list_alamat.*
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_pengiriman.*
 import kotlinx.android.synthetic.main.activity_pengiriman.btn_tambahAlamat
 import kotlinx.android.synthetic.main.activity_pengiriman.div_kosong
@@ -96,7 +94,51 @@ class PengirimanActivity : AppCompatActivity() {
         btn_tambahAlamat.setOnClickListener {
             startActivity(Intent(this, ListAlamatActivity::class.java))
         }
+        btn_bayar.setOnClickListener {
+            bayar()
+        }
 
+    }
+    private fun bayar() {
+        val user = SharedPref(this).getUser()!!
+        val a = myDb.daoAlamat().getByStatus(true)!!
+
+        val listProduk = myDb.daoKeranjang().getAll() as ArrayList
+        var totalItem = 0
+        var totalHarga = 0
+        val produks = ArrayList<Chekout.Item>()
+        for (p in listProduk) {
+            if (p.selected) {
+                totalItem += p.jumlah
+                totalHarga += (p.jumlah * Integer.valueOf(p.harga))
+
+                val produk = Chekout.Item()
+                produk.id = "" + p.id
+                produk.total_item = "" + p.jumlah
+                produk.total_harga = "" + (p.jumlah * Integer.valueOf(p.harga))
+                produk.catatan = "catatan baru"
+                produks.add(produk)
+            }
+        }
+
+        val chekout = Chekout()
+        chekout.user_id = "" + user.id
+        chekout.total_item = "" + totalItem
+        chekout.total_harga = "" + totalHarga
+        chekout.name = a.name
+        chekout.phone = a.phone
+        chekout.jasa_pengiriaman = jasaKirim
+        chekout.ongkir = ongkir
+        chekout.kurir = kurir
+        chekout.detail_lokasi = tv_alamat.text.toString()
+        chekout.total_transfer = "" + (totalHarga + Integer.valueOf(ongkir))
+        chekout.produks = produks
+
+        val json = Gson().toJson(chekout, Chekout::class.java)
+        Log.d("Respon:", "jseon:" + json)
+        val intent = Intent(this, PembayaranActivity::class.java)
+        intent.putExtra("extra", json)
+        startActivity(intent)
     }
 
     private fun getOnkir(kurir: String){
@@ -131,7 +173,10 @@ class PengirimanActivity : AppCompatActivity() {
         tv_total.text = Helper().gantiRupiah(Integer.valueOf(ongkir) + totalHarga)
     }
 
-    private fun displayOngkir(kurir: String, arrayList: ArrayList<Costs>){
+    var ongkir = ""
+    var kurir = ""
+    var jasaKirim = ""
+    private fun displayOngkir(_kurir: String, arrayList: ArrayList<Costs>){
         var arrayOngkir = ArrayList<Costs>()
         for (i in arrayList.indices) {
             val ongkir = arrayList[i]
@@ -141,12 +186,15 @@ class PengirimanActivity : AppCompatActivity() {
             arrayOngkir.add(ongkir)
         }
         setTotal(arrayOngkir[0].cost[0].value)
+        ongkir = arrayOngkir[0].cost[0].value
+        kurir = _kurir
+        jasaKirim = arrayOngkir[0].service
 
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
 
         var adapter: AdapterKurir? = null
-        adapter = AdapterKurir(arrayOngkir, kurir, object : AdapterKurir.Listeners {
+        adapter = AdapterKurir(arrayOngkir, _kurir, object : AdapterKurir.Listeners {
 
             override fun onClicked(data: Costs, index: Int) {
                 val newArrayOngkir = ArrayList<Costs>()
@@ -157,6 +205,10 @@ class PengirimanActivity : AppCompatActivity() {
                 arrayOngkir = newArrayOngkir
                 adapter!!.notifyDataSetChanged()
                 setTotal(data.cost[0].value)
+
+                ongkir = data.cost[0].value
+                kurir = _kurir
+                jasaKirim = data.service
 
             }
 

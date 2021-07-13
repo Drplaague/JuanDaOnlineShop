@@ -3,8 +3,8 @@ package com.example.juandaonlineshop.helper
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.juandaonlineshop.model.User
 import com.google.gson.Gson
+import com.example.juandaonlineshop.model.User
 
 class SharedPref(activity: Activity) {
 

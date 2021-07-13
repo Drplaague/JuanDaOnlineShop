@@ -8,19 +8,28 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.juandaonlineshop.R
+import com.example.juandaonlineshop.activity.MasukActivity
 import com.example.juandaonlineshop.activity.PengirimanActivity
 import com.example.juandaonlineshop.adapter.AdapterKeranjang
 import com.example.juandaonlineshop.helper.Helper
+import com.example.juandaonlineshop.helper.SharedPref
 import com.example.juandaonlineshop.model.Produk
 import com.example.juandaonlineshop.room.MyDatabase
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 class KeranjangFragment : Fragment() {
 
-    lateinit var mydb : MyDatabase
+    lateinit var myDb : MyDatabase
+    lateinit var s: SharedPref
+
     //di panggil sekali ketika aktif
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,10 +38,10 @@ class KeranjangFragment : Fragment() {
         // Inflate the layout for this fragment
         val view: View = inflater.inflate(R.layout.fragment_keranjang, container, false)
         init(view)
-        mydb = MyDatabase.getInstance(requireActivity())!!
+        myDb = MyDatabase.getInstance(requireActivity())!!
+        s = SharedPref(requireActivity())
 
         mainButton()
-
         return view
     }
 
@@ -40,7 +49,7 @@ class KeranjangFragment : Fragment() {
     var listProduk = ArrayList<Produk>()
 
     private fun displayproduk(){
-        listProduk = mydb.daoKeranjang().getAll() as ArrayList
+        listProduk = myDb.daoKeranjang().getAll() as ArrayList
 
         val layoutManager = LinearLayoutManager(activity)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -63,7 +72,7 @@ class KeranjangFragment : Fragment() {
 
     var totalHarga = 0
     fun hitungTotal(){
-        val listProduk = mydb.daoKeranjang().getAll() as ArrayList
+        val listProduk = myDb.daoKeranjang().getAll() as ArrayList
         totalHarga = 0
 
         //check box
@@ -83,14 +92,33 @@ class KeranjangFragment : Fragment() {
 
     private fun mainButton(){
         btnDelete.setOnClickListener {
+            val listDelete = ArrayList<Produk>()
+            for (p in listProduk) {
+                if (p.selected) listDelete.add(p)
+            }
+
+            delete(listDelete)
 
         }
 
         btnBayar.setOnClickListener {
-            val intent = Intent(requireActivity(), PengirimanActivity::class.java)
-            intent.putExtra("extra", "" + totalHarga)
-            startActivity(intent)
 
+            if (s.getStatusLogin()) {
+                var isThereProduk = false
+                for (p in listProduk) {
+                    if (p.selected) isThereProduk = true
+                }
+
+                if (isThereProduk) {
+                    val intent = Intent(requireActivity(), PengirimanActivity::class.java)
+                    intent.putExtra("extra", "" + totalHarga)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(requireContext(), "Tidak ada produk yg terpilih", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                requireActivity().startActivity(Intent(requireActivity(), MasukActivity::class.java))
+            }
         }
         cbAll.setOnClickListener {
             for (i in listProduk.indices) {
@@ -102,6 +130,17 @@ class KeranjangFragment : Fragment() {
         }
 
 
+    }
+
+    private fun delete(data: ArrayList<Produk>) {
+        CompositeDisposable().add(Observable.fromCallable { myDb.daoKeranjang().delete(data) }
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                listProduk.clear()
+                listProduk.addAll(myDb.daoKeranjang().getAll() as ArrayList)
+                adapter.notifyDataSetChanged()
+            })
     }
 
     lateinit var btnDelete: ImageView

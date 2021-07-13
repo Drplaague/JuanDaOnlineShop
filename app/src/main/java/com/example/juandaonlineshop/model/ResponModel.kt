@@ -1,6 +1,6 @@
 package com.example.juandaonlineshop.model
 
-class ResponOnkir {
+class ResponModel {
     var success = 0
     lateinit var message: String
     var user = User()

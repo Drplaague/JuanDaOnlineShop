@@ -13,7 +13,7 @@ import com.example.juandaonlineshop.app.ApiConfigAlamat
 import com.example.juandaonlineshop.helper.Helper
 import com.example.juandaonlineshop.model.Alamat
 import com.example.juandaonlineshop.model.ModelAlamat
-import com.example.juandaonlineshop.model.ResponOnkir
+import com.example.juandaonlineshop.model.ResponModel
 import com.example.juandaonlineshop.room.MyDatabase
 import com.example.juandaonlineshop.util.ApiKey
 import io.reactivex.Observable
@@ -111,11 +111,11 @@ class TambahAlamatActivity : AppCompatActivity() {
     }
 
     private fun getProvinsi(){
-        ApiConfigAlamat.instanceRetrofit.getProvinsi(ApiKey.key).enqueue(object : Callback<ResponOnkir> {
-            override fun onFailure(call: Call<ResponOnkir>, t: Throwable) {
+        ApiConfigAlamat.instanceRetrofit.getProvinsi(ApiKey.key).enqueue(object : Callback<ResponModel> {
+            override fun onFailure(call: Call<ResponModel>, t: Throwable) {
             }
 
-            override fun onResponse(call: Call<ResponOnkir>, response: Response<ResponOnkir>) {
+            override fun onResponse(call: Call<ResponModel>, response: Response<ResponModel>) {
                 if (response.isSuccessful){
                     pb.visibility = View.GONE
                     div_provinsi.visibility = View.VISIBLE
@@ -161,11 +161,11 @@ class TambahAlamatActivity : AppCompatActivity() {
 
     private fun getKota(id: String){
         pb.visibility = View.VISIBLE
-        ApiConfigAlamat.instanceRetrofit.getKota(ApiKey.key, id).enqueue(object : Callback<ResponOnkir> {
-            override fun onFailure(call: Call<ResponOnkir>, t: Throwable) {
+        ApiConfigAlamat.instanceRetrofit.getKota(ApiKey.key, id).enqueue(object : Callback<ResponModel> {
+            override fun onFailure(call: Call<ResponModel>, t: Throwable) {
             }
 
-            override fun onResponse(call: Call<ResponOnkir>, response: Response<ResponOnkir>) {
+            override fun onResponse(call: Call<ResponModel>, response: Response<ResponModel>) {
                 if (response.isSuccessful){
                     pb.visibility = View.GONE
                     div_kota.visibility = View.VISIBLE
@@ -212,11 +212,11 @@ class TambahAlamatActivity : AppCompatActivity() {
 
     private fun getKecamatan(id: Int){
         pb.visibility = View.VISIBLE
-        ApiConfigAlamat.instanceRetrofit.getKecamatan(id).enqueue(object : Callback<ResponOnkir> {
-            override fun onFailure(call: Call<ResponOnkir>, t: Throwable) {
+        ApiConfigAlamat.instanceRetrofit.getKecamatan(id).enqueue(object : Callback<ResponModel> {
+            override fun onFailure(call: Call<ResponModel>, t: Throwable) {
             }
 
-            override fun onResponse(call: Call<ResponOnkir>, response: Response<ResponOnkir>) {
+            override fun onResponse(call: Call<ResponModel>, response: Response<ResponModel>) {
                 if (response.isSuccessful){
                     pb.visibility = View.GONE
                     div_kecamatan.visibility = View.VISIBLE

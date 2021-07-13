@@ -8,14 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
-import com.example.juandaonlineshop.MainActivity
 import com.example.juandaonlineshop.R
 import com.example.juandaonlineshop.adapter.AdapterProduk
 import com.example.juandaonlineshop.adapter.AdapterSlider
 import com.example.juandaonlineshop.app.ApiConfig
 import com.example.juandaonlineshop.model.Produk
-import com.example.juandaonlineshop.model.ResponOnkir
-import kotlinx.android.synthetic.main.activity_login.*
+import com.example.juandaonlineshop.model.ResponModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -72,11 +70,11 @@ class HomeFragment : Fragment() {
     }
     private var listProduk: ArrayList<Produk> = ArrayList()
     fun getProduk() {
-        ApiConfig.instanceRetrofit.getProduk().enqueue(object : Callback<ResponOnkir> {
-            override fun onFailure(call: Call<ResponOnkir>, t: Throwable) {
+        ApiConfig.instanceRetrofit.getProduk().enqueue(object : Callback<ResponModel> {
+            override fun onFailure(call: Call<ResponModel>, t: Throwable) {
             }
 
-            override fun onResponse(call: Call<ResponOnkir>, response: Response<ResponOnkir>) {
+            override fun onResponse(call: Call<ResponModel>, response: Response<ResponModel>) {
                 val res = response.body()!!
                 if (res.success == 1) {
                     val arrayProduk = ArrayList<Produk>()
