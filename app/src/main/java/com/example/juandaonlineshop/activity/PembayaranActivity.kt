@@ -9,11 +9,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.juandaonlineshop.R
 import com.example.juandaonlineshop.adapter.AdapterBank
 import com.example.juandaonlineshop.app.ApiConfig
+import com.example.juandaonlineshop.helper.Helper
 import com.example.juandaonlineshop.model.Bank
 import com.example.juandaonlineshop.model.Chekout
 import com.example.juandaonlineshop.model.ResponModel
+import com.example.juandaonlineshop.model.Transaksi
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_pembayaran.*
+import kotlinx.android.synthetic.main.toolbar.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,6 +25,7 @@ class PembayaranActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pembayaran)
+        Helper().setToolbar(this, toolbar, "Transfer Bank")
 
         displayBank()
     }
@@ -38,15 +42,15 @@ class PembayaranActivity : AppCompatActivity() {
         rv_data.layoutManager = layoutManager
         rv_data.adapter = AdapterBank(arrBank, object : AdapterBank.Listeners {
             override fun onClicked(data: Bank, index: Int) {
-                bayar(data.nama)
+                bayar(data)
             }
         })
     }
 
-    fun bayar(bank : String) {
+    fun bayar(bank : Bank) {
         val json = intent.getStringExtra("extra")!!.toString()
         val chekout = Gson().fromJson(json, Chekout::class.java)
-        chekout.bank = bank
+        chekout.bank = bank.nama
 
         ApiConfig.instanceRetrofit.chekout(chekout).enqueue(object : Callback<ResponModel> {
             override fun onFailure(call: Call<ResponModel>, t: Throwable) {
@@ -57,12 +61,24 @@ class PembayaranActivity : AppCompatActivity() {
 
                 val respon = response.body()!!
                 if (respon.success == 1) {
-                    Toast.makeText(this@PembayaranActivity, "Berhasil kirim ke server :" + respon.message, Toast.LENGTH_SHORT).show()
+                    val jsBank = Gson().toJson(bank, Bank::class.java)
+                    val jsTransaksi = Gson().toJson(respon.transaksi, Transaksi::class.java)
+                    val jsChekout = Gson().toJson(chekout, Chekout::class.java)
 
+                    val intent = Intent(this@PembayaranActivity, SuccessActivity::class.java)
+                    intent.putExtra("bank", jsBank)
+                    intent.putExtra("transaksi", jsTransaksi)
+                    intent.putExtra("chekout", jsChekout)
+                    startActivity(intent)
                 } else {
                     Toast.makeText(this@PembayaranActivity, "Error :" + respon.message, Toast.LENGTH_SHORT).show()
                 }
             }
         })
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
     }
 }

@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.juandaonlineshop.R
 import com.example.juandaonlineshop.activity.LoginActivity
+import com.example.juandaonlineshop.activity.RiwayatActivity
 import com.example.juandaonlineshop.helper.SharedPref
 
 class AkunFragment : Fragment() {
@@ -41,7 +42,9 @@ class AkunFragment : Fragment() {
             s.setStatusLogin(false)
         }
 
-
+        btnRiwayat.setOnClickListener {
+            startActivity(Intent(requireActivity(), RiwayatActivity::class.java))
+        }
     }
 
     fun setData() {
@@ -57,7 +60,7 @@ class AkunFragment : Fragment() {
 
         tvNama.text = user.name
         tvEmail.text = user.email
-//        tvPhone.text = user.phone
+        tvPhone.text = user.phone
     }
 
 

@@ -59,4 +59,9 @@ interface ApiService {
         @Body data: Chekout
     ): Call<ResponModel>
 
+    @GET("chekout/user/{id}")
+    fun getRiwayat(
+        @Path("id") id: Int
+    ): Call<ResponModel>
+
 }
