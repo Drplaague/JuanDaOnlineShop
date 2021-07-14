@@ -15,6 +15,7 @@ import com.example.juandaonlineshop.model.Chekout
 import com.example.juandaonlineshop.model.ResponModel
 import com.example.juandaonlineshop.model.Transaksi
 import com.google.gson.Gson
+import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog
 import kotlinx.android.synthetic.main.activity_pembayaran.*
 import kotlinx.android.synthetic.main.toolbar.*
 import retrofit2.Call
@@ -52,12 +53,22 @@ class PembayaranActivity : AppCompatActivity() {
         val chekout = Gson().fromJson(json, Chekout::class.java)
         chekout.bank = bank.nama
 
+        val loading = SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
+        loading.setTitleText("Loading...").show()
+
         ApiConfig.instanceRetrofit.chekout(chekout).enqueue(object : Callback<ResponModel> {
             override fun onFailure(call: Call<ResponModel>, t: Throwable) {
+                loading.dismiss()
+                error(t.message.toString())
 //                Toast.makeText(this, "Error:" + t.message, Toast.LENGTH_SHORT).show()
             }
 
             override fun onResponse(call: Call<ResponModel>, response: Response<ResponModel>) {
+                loading.dismiss()
+                if (!response.isSuccessful) {
+                    error(response.message())
+                    return
+                }
 
                 val respon = response.body()!!
                 if (respon.success == 1) {
@@ -71,10 +82,18 @@ class PembayaranActivity : AppCompatActivity() {
                     intent.putExtra("chekout", jsChekout)
                     startActivity(intent)
                 } else {
-                    Toast.makeText(this@PembayaranActivity, "Error :" + respon.message, Toast.LENGTH_SHORT).show()
+                    error(respon.message)
+                    Toast.makeText(this@PembayaranActivity, "Error:" + respon.message, Toast.LENGTH_SHORT).show()
                 }
             }
         })
+    }
+
+    fun error(pesan: String) {
+        SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+            .setTitleText("Oops...")
+            .setContentText(pesan)
+            .show()
     }
 
     override fun onSupportNavigateUp(): Boolean {

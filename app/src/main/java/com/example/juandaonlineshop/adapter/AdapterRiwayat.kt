@@ -60,10 +60,16 @@ class AdapterRiwayat(var data:ArrayList<Transaksi>, var listener: Listeners): Re
         holder.tvHarga.text = Helper().gantiRupiah(a.total_transfer)
         holder.tvJumlah.text = a.total_item + " Items"
         holder.tvStatus.text = a.status
-        holder.tvTangal.text = a.created_at
+
+        // 2021-04-30 18:30:20 //24
+        // jam 1   k || 01  kk
+        // 09:20:20 am 12/pm/am
+        val formatBaru = "d MMM yyyy"
+        holder.tvTangal.text = Helper().convertTanggal(a.created_at, formatBaru)
 
         var color = context.getColor(R.color.menungu)
         if (a.status == "SELESAI") color = context.getColor(R.color.selesai)
+        else if (a.status == "BATAL") color = context.getColor(R.color.batal)
 
 
         holder.tvStatus.setTextColor(color)
