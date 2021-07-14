@@ -50,7 +50,10 @@ class RiwayatActivity : AppCompatActivity() {
 
         rv_riwayat.adapter = AdapterRiwayat(transaksis, object : AdapterRiwayat.Listeners {
             override fun onClicked(data: Transaksi) {
-
+                val json = Gson().toJson(data, Transaksi::class.java)
+                val intent = Intent(this@RiwayatActivity, DetailTransaksiActivity::class.java)
+                intent.putExtra("transaksi", json)
+                startActivity(intent)
             }
         })
         rv_riwayat.layoutManager = layoutManager
